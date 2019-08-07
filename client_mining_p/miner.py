@@ -49,9 +49,7 @@ if __name__ == '__main__':
     while True:
         # TODO: Get the last proof from the server and look for a new one
 
-        # r = requests.get(f"{node}/last_proof")  # url
-        r = requests.get("http://localhost:5000/last_proof")
-        #print("GET STATUS: ", r.status_code)
+        r = requests.get(f"{node}/last_proof")  # url
         if r.status_code == 200:
             response = r.json()
             last_proof = response['last_proof']

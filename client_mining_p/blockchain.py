@@ -243,10 +243,11 @@ def chain_validity():
     return jsonify(response), 200
 
 # TODO: Add an endpoint called last_proof that returns the proof of the last block in the chain
+
 @app.route('/last_proof', methods=['GET'])
 def last_proof():
     response = {
-        'last_proof': blockchain.last_block()['proof']
+        'last_proof': blockchain.last_block['proof']
     }
     return jsonify(response), 200
 
