@@ -55,7 +55,7 @@ class Blockchain(object):
 
         return self.last_block['index'] + 1
 
-    @staticmethod
+    @staticmethod # there's no self
     def hash(block):
         """
         Creates a SHA-256 hash of a Block
@@ -177,6 +177,8 @@ def new_transaction():
 def full_chain():
     response = {
         # TODO: Return the chain and its current length
+        'chain': blockchain.chain, # instance of Blockchain class
+        'length': len(blockchain.chain),
     }
     return jsonify(response), 200
 
