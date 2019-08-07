@@ -74,23 +74,32 @@ class Blockchain(object):
     def last_block(self):
         return self.chain[-1]
 
-    def proof_of_work(self, last_proof):
+    def proof_of_work(self):
         """
         Simple Proof of Work Algorithm
         Find a number p such that hash(last_block_string, p) contains 6 leading
         zeroes
         """
 
-        pass
+        block_string = json.dumps(self.last_block, sort_keys=True).encode()
+        proof = 0
+        while not self.valid_proof(block_string, proof): # while validproof() returns false
+            proof += 1
 
-    @staticmethod
-    def valid_proof(last_proof, proof):
+        return proof
+
+    @staticmethod # proof of work is dependent on valid_proof so this is #1
+    def valid_proof(block_string, proof): 
         """
         Validates the Proof:  Does hash(block_string, proof) contain 6
         leading zeroes?
         """
         # TODO
-        pass
+        guess = f"{block_string}{proof}".encode() # make encoded string
+        guess_hash = hashlib.sha256(guess).hexdigest() # puts it in hexidec format
+
+        # TODO: CHANGE BACK TO SIX!!!!!!!!
+        return guess_hash[:4] == "0000" # 1st 6 things = 6 zeros?
 
     def valid_chain(self, chain):
         """
@@ -135,14 +144,20 @@ def mine():
     # We run the proof of work algorithm to get the next proof...
     proof = blockchain.proof_of_work()
 
+    print(f"Found valid proof!: {proof}")
+
     # We must receive a reward for finding the proof.
     # TODO:
     # The sender is "0" to signify that this node has mine a new coin
     # The recipient is the current node, it did the mining!
     # The amount is 1 coin as a reward for mining the next block
 
-    # Forge the new Block by adding it to the chain
+    blockchain.new_transaction(0, node_identifier, 1)
+
+    # Forge the new Block by adding it to the chain -> need proof and prev hash
     # TODO
+    last_block_hash = blockchain.hash(blockchain.last_block)
+    block = blockchain.new_block(proof, last_block_hash) # .new_block returns a block
 
     # Send a response with the new block
     response = {
