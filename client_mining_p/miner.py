@@ -12,7 +12,7 @@ def proof_of_work(last_proof):
     zeroes
     """
     proof = 0
-    print("Starting validating proof...")
+    print("Starting finding valid proof...")
     while not valid_proof(last_proof, proof):  # False
         proof += 1
 
@@ -44,12 +44,14 @@ if __name__ == '__main__':
         node = "http://localhost:5000"
 
     coins_mined = 0
+
     # Run forever until interrupted
     while True:
         # TODO: Get the last proof from the server and look for a new one
 
         r = requests.get(f"{node}/last_proof")  # url
-        last_proof = r.response['last_proof']
+        response = r.json()
+        last_proof = response['last_proof']
         new_proof = proof_of_work(last_proof)
 
         # TODO: When found, POST it to the server {"proof": new_proof}
@@ -61,13 +63,15 @@ if __name__ == '__main__':
 
         if new_proof:
             r.requests.post(f"{node}/mine", json={"proof": new_proof})
+            p_response = r.json()
+            print("JSON OBJECT: ", p_response)
 
-            if r.response and r.response['message'] == 'New Block Forged':
-                print(f"{r.status_code} Success! {r.response['message']}")
+            if p_response and p_response['message'] == 'New Block Forged':
+                
                 coins_mined += 1
                 print(
-                    f"Success! {r.response['message']} /n Coins Mined: {coins_mined}")
+                    f"{r.status_code} Success! {p_response['message']} /n Coins Mined: {coins_mined}")
 
-            elif r.response and r.response['message'] != 'New Block Forged':
+            elif p_response and p_response['message'] != 'New Block Forged':
                 print(
-                    f"{r.status_code} Something went wrong. /n {r.response['message']}")
+                    f"{r.status_code} Something went wrong. /n {p_response['message']}")
