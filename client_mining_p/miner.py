@@ -49,29 +49,35 @@ if __name__ == '__main__':
     while True:
         # TODO: Get the last proof from the server and look for a new one
 
-        r = requests.get(f"{node}/last_proof")  # url
-        response = r.json()
-        last_proof = response['last_proof']
-        new_proof = proof_of_work(last_proof)
+        # r = requests.get(f"{node}/last_proof")  # url
+        r = requests.get("http://localhost:5000/last_proof")
+        #print("GET STATUS: ", r.status_code)
+        if r.status_code == 200:
+            response = r.json()
+            last_proof = response['last_proof']
+            new_proof = proof_of_work(last_proof)
 
-        # TODO: When found, POST it to the server {"proof": new_proof}
-        # TODO: We're going to have to research how to do a POST in Python
-        # HINT: Research `requests` and remember we're sending our data as JSON
-        # TODO: If the server responds with 'New Block Forged'
-        # add 1 to the number of coins mined and print it.  Otherwise,
-        # print the message from the server.
+            # TODO: When found, POST it to the server {"proof": new_proof}
+            # TODO: We're going to have to research how to do a POST in Python
+            # HINT: Research `requests` and remember we're sending our data as JSON
+            # TODO: If the server responds with 'New Block Forged'
+            # add 1 to the number of coins mined and print it.  Otherwise,
+            # print the message from the server.
 
-        if new_proof:
-            r.requests.post(f"{node}/mine", json={"proof": new_proof})
-            p_response = r.json()
-            print("JSON OBJECT: ", p_response)
+            if new_proof:
+                r.requests.post(f"{node}/mine", json={"proof": new_proof})
+                p_response = r.json()
+                print("JSON OBJECT: ", p_response)
 
-            if p_response and p_response['message'] == 'New Block Forged':
-                
-                coins_mined += 1
-                print(
-                    f"{r.status_code} Success! {p_response['message']} /n Coins Mined: {coins_mined}")
+                if p_response and p_response['message'] == 'New Block Forged':
 
-            elif p_response and p_response['message'] != 'New Block Forged':
-                print(
-                    f"{r.status_code} Something went wrong. /n {p_response['message']}")
+                    coins_mined += 1
+                    print(
+                        f"{r.status_code} Success! {p_response['message']} /n Coins Mined: {coins_mined}")
+
+                elif p_response and p_response['message'] != 'New Block Forged':
+                    print(
+                        f"{r.status_code} Something went wrong. /n {p_response['message']}")
+        else:
+            print("GET Error ", r.status_code)
+            break
