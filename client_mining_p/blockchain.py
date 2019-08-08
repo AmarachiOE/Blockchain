@@ -73,8 +73,8 @@ class Blockchain(object):
     @property
     def last_block(self):
         return self.chain[-1]
-    
-    ###### REMOVE proof_of_work FROM SERVER
+
+    # REMOVE proof_of_work FROM SERVER
 
     # def proof_of_work(self):
     #     """
@@ -157,24 +157,31 @@ blockchain = Blockchain()
 @app.route('/mine', methods=['POST'])
 def mine():
 
-    block_string = json.dumps(blockchain.last_block, sort_keys=True).encode()
+    last_block_string = json.dumps(
+        blockchain.last_block, sort_keys=True).encode()
 
     values = request.get_json()
     if 'proof' not in values:
         return 'Missing Proof', 400
 
+    submitted_proof = values['proof']
+
     # required = ['proof']
     # if not all(k in values for k in required):
     #     return 'Missing Values', 400
-    
-    if not blockchain.valid_proof(block_string, values['proof']):
-        return f"Proof {values['proof']} is rejected"
 
-    if blockchain.valid_proof(block_string, values['proof']): # if valid proof is true
-        #return "Validated"
-        print(f"Proof {values['proof']} is valid!")
+    if not blockchain.valid_proof(last_block_string, submitted_proof):
+        response = {
+            'message': "Proof was invalid or already submitted"
+        }
+        # return f"Proof {submitted_proof} is rejected"
+        return jsonify(response), 200
 
-    
+    # if valid proof is true
+    if blockchain.valid_proof(last_block_string, submitted_proof):
+        # return "Validated"
+        print(f"Proof {submitted_proof} is valid!")
+
         """ previous code:
         # We run the proof of work algorithm to get the next proof...
         proof = blockchain.proof_of_work()
@@ -244,13 +251,23 @@ def chain_validity():
 
 # TODO: Add an endpoint called last_proof that returns the proof of the last block in the chain
 
-@app.route('/last_proof', methods=['GET'])
-def last_proof():
+# @app.route('/last_proof', methods=['GET'])
+# def last_proof():
+#     response = {
+#         'last_proof': blockchain.last_block['proof'],
+#     }
+#     return jsonify(response), 200
+
+
+@app.route('/last_block', methods=['GET'])
+def last_block():
+    # block_string = json.dumps(blockchain.last_block, sort_keys=True).encode() # already valid json so don't need jsonify
     response = {
-        'last_proof': blockchain.last_block['proof'],
-        #'valid_chain': blockchain.valid_chain(blockchain.chain),
+        'last_block': blockchain.last_block
     }
     return jsonify(response), 200
+    # returning an object now not a string, so act on miner accordinly
+    # return response, 200
 
 
 # Run the program on port 5000
