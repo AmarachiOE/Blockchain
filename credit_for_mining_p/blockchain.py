@@ -201,7 +201,7 @@ def mine():
         # The sender is "0" to signify that this node has mine a new coin
         # The recipient is the current node, it did the mining!
         # The amount is 1 coin as a reward for mining the next block
-        blockchain.new_transaction(sender_id, node_identifier, 1)
+        blockchain.new_transaction(0, sender_id, 1)
 
         # Forge the new Block by adding it to the chain
         last_block_hash = blockchain.hash(blockchain.last_block)
