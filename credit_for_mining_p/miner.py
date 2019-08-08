@@ -59,7 +59,7 @@ def valid_proof(block_string, proof):
     guess_hash = hashlib.sha256(guess).hexdigest()
 
     # TODO: CHANGE BACK TO SIX !!!!!!
-    return guess_hash[:4] == "0000"
+    return guess_hash[:6] == "000000"
 
 
 if __name__ == '__main__':

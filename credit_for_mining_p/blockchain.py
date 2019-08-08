@@ -197,6 +197,7 @@ def mine():
         print(f'Miner submitted valid proof!: {submitted_proof}')
 
         # We must receive a reward for finding the proof.
+        # args are (sender, recipient, amount)
         # The sender is "0" to signify that this node has mine a new coin
         # The recipient is the current node, it did the mining!
         # The amount is 1 coin as a reward for mining the next block
